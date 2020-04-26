@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="a.dao.TDocInfoDao">
+
+
+	<insert id="batchInsert">
+		insert into t_doc_info (
+		<trim suffixOverrides=",">
+		docid,
+		terms,
+		positive,
+		version,
+		create_time,
+		update_time,
+		</trim>
+		) values
+		<foreach collection="collection" index="index" item="item" open=""
+			separator="," close="">
+			(
+			<trim suffixOverrides=",">
+			<if test="item.docid==null">0,</if>
+			<if test="item.docid!=null">#{item.docid},</if>
+			#{item.terms},
+			<if test="item.positive==null">,</if>
+			<if test="item.positive!=null">#{item.positive},</if>
+			<if test="item.version==null">0,</if>
+			<if test="item.version!=null">#{item.version},</if>
+			<if test="item.createTime==null">CURRENT_TIMESTAMP,</if>
+			<if test="item.createTime!=null">#{item.createTime},</if>
+			<if test="item.updateTime==null">CURRENT_TIMESTAMP,</if>
+			<if test="item.updateTime!=null">#{item.updateTime},</if>
+			</trim>
+			)
+		</foreach>
+	</insert>
+	
+	<delete id="delete">
+		delete from t_doc_info
+		<include refid="where"/>
+	</delete>
+	
+	<sql id="where">
+		<where>
+				<if test="where.docids != null and where.docids.size>0">
+				and docid in
+				<foreach collection="where.docids" index="index" item="item" open="("
+					separator="," close=")">
+					#{item}
+				</foreach>
+				</if>
+				<if test="where.docidGt != null">
+				and docid &gt; #{where.docidGt}
+				</if>
+				<if test="where.docidLt != null">
+				and docid &lt; #{where.docidLt}
+				</if>
+		</where>
+		<if test="where.pageNo!=null and where.pageSize!=null">
+		limit #{where.offset},#{where.pageSize}
+		</if>
+	</sql>
+	
+	<update id="update">
+		update t_doc_info
+	    <set>
+	        <if test="update.docid!=null">
+			docid = #{update.docid},
+			</if>
+	        <if test="update.terms!=null">
+			terms = #{update.terms},
+			</if>
+	        <if test="update.positive!=null">
+			positive = #{update.positive},
+			</if>
+	        <if test="update.version!=null">
+			version = #{update.version},
+			</if>
+	        <if test="update.createTime!=null">
+			create_time = #{update.createTime},
+			</if>
+	        <if test="update.updateTime!=null">
+			update_time = #{update.updateTime},
+			</if>
+		</set>
+	    <include refid="where"/>
+	</update>
+	
+	<select id="select" resultType="a.vo.TDocInfo">
+	    select * from t_doc_info
+	    <include refid="where"/>
+	</select>
+	
+	<select id="count" resultType="java.lang.Long">
+		select count(*) from t_doc_info
+		<include refid="where"/>
+	</select>
+
+</mapper>
+  
+
+  
+	

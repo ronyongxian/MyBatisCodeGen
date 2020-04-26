@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="a.dao.TIndexLastModifyTimeDao">
+
+
+	<insert id="batchInsert">
+		insert into t_index_last_modify_time (
+		<trim suffixOverrides=",">
+		id,
+		last_modify,
+		create_time,
+		update_time,
+		</trim>
+		) values
+		<foreach collection="collection" index="index" item="item" open=""
+			separator="," close="">
+			(
+			<trim suffixOverrides=",">
+			<if test="item.id==null">0,</if>
+			<if test="item.id!=null">#{item.id},</if>
+			<if test="item.lastModify==null">CURRENT_TIMESTAMP,</if>
+			<if test="item.lastModify!=null">#{item.lastModify},</if>
+			<if test="item.createTime==null">CURRENT_TIMESTAMP,</if>
+			<if test="item.createTime!=null">#{item.createTime},</if>
+			<if test="item.updateTime==null">CURRENT_TIMESTAMP,</if>
+			<if test="item.updateTime!=null">#{item.updateTime},</if>
+			</trim>
+			)
+		</foreach>
+	</insert>
+	
+	<delete id="delete">
+		delete from t_index_last_modify_time
+		<include refid="where"/>
+	</delete>
+	
+	<sql id="where">
+		<where>
+				<if test="where.ids != null and where.ids.size>0">
+				and id in
+				<foreach collection="where.ids" index="index" item="item" open="("
+					separator="," close=")">
+					#{item}
+				</foreach>
+				</if>
+				<if test="where.idGt != null">
+				and id &gt; #{where.idGt}
+				</if>
+				<if test="where.idLt != null">
+				and id &lt; #{where.idLt}
+				</if>
+		</where>
+		<if test="where.pageNo!=null and where.pageSize!=null">
+		limit #{where.offset},#{where.pageSize}
+		</if>
+	</sql>
+	
+	<update id="update">
+		update t_index_last_modify_time
+	    <set>
+	        <if test="update.id!=null">
+			id = #{update.id},
+			</if>
+	        <if test="update.lastModify!=null">
+			last_modify = #{update.lastModify},
+			</if>
+	        <if test="update.createTime!=null">
+			create_time = #{update.createTime},
+			</if>
+	        <if test="update.updateTime!=null">
+			update_time = #{update.updateTime},
+			</if>
+		</set>
+	    <include refid="where"/>
+	</update>
+	
+	<select id="select" resultType="a.vo.TIndexLastModifyTime">
+	    select * from t_index_last_modify_time
+	    <include refid="where"/>
+	</select>
+	
+	<select id="count" resultType="java.lang.Long">
+		select count(*) from t_index_last_modify_time
+		<include refid="where"/>
+	</select>
+
+</mapper>
+  
+
+  
+	
