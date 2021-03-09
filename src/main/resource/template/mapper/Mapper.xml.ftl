@@ -77,12 +77,21 @@
 					${r'#{'}item}
 				</foreach>
 				</if>
+				<if test="condition.${column.instanceName} != null">
+				and ${column.field} = ${r'#{'}condition.${column.instanceName}}
+				</if>
 				<#if (column.str==false)>
 				<if test="condition.${column.instanceName}Gt != null">
 				and ${column.field} &gt; ${r'#{'}condition.${column.instanceName}Gt}
 				</if>
 				<if test="condition.${column.instanceName}Lt != null">
 				and ${column.field} &lt; ${r'#{'}condition.${column.instanceName}Lt}
+				</if>
+				<if test="condition.${column.instanceName}Gte != null">
+				and ${column.field} &gt;= ${r'#{'}condition.${column.instanceName}Gte}
+				</if>
+				<if test="condition.${column.instanceName}Lte != null">
+				and ${column.field} &lt;= ${r'#{'}condition.${column.instanceName}Lte}
 				</if>
 				</#if>
 			</#list>
@@ -94,6 +103,9 @@
 					separator="," close=")">
 					${r'#{'}item}
 				</foreach>
+				</if>
+				<if test="condition.${column.instanceName} != null">
+				and ${column.field} = ${r'#{'}condition.${column.instanceName}}
 				</if>
 			</#if>
 			</#list>
